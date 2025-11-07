@@ -175,51 +175,95 @@
   </div>
 
   <script>
-    const apiKey = "9efecffb46e7e68680740d2cf0950b7a";
-    const searchBtn = document.getElementById("searchBtn");
-    const stateSelect = document.getElementById("stateSelect");
-    const spinner = document.getElementById("loadingSpinner");
-    const resultDiv = document.getElementById("weatherResult");
+  const apiKey = "9efecffb46e7e68680740d2cf0950b7a";
+  const searchBtn = document.getElementById("searchBtn");
+  const stateSelect = document.getElementById("stateSelect");
+  const spinner = document.getElementById("loadingSpinner");
+  const resultDiv = document.getElementById("weatherResult");
 
-    searchBtn.addEventListener("click", () => {
-      const state = stateSelect.value;
-      if (state === "-- Select a State --" || !state) {
-        alert("Please select a Nigerian state!");
+  // Mapping Nigerian states to a major city recognized by OpenWeatherMap
+  const stateToCity = {
+    "Abia": "Umuahia",
+    "Adamawa": "Yola",
+    "Akwa Ibom": "Uyo",
+    "Anambra": "Awka",
+    "Bauchi": "Bauchi",
+    "Bayelsa": "Yenagoa",
+    "Benue": "Makurdi",
+    "Borno": "Maiduguri",
+    "Cross River": "Calabar",
+    "Delta": "Asaba",
+    "Ebonyi": "Abakaliki",
+    "Edo": "Benin City",
+    "Ekiti": "Ado Ekiti",
+    "Enugu": "Enugu",
+    "Gombe": "Gombe",
+    "Imo": "Owerri",
+    "Jigawa": "Dutse",
+    "Kaduna": "Kaduna",
+    "Kano": "Kano",
+    "Katsina": "Katsina",
+    "Kebbi": "Birnin Kebbi",
+    "Kogi": "Lokoja",
+    "Kwara": "Ilorin",
+    "Lagos": "Ikeja",
+    "Nasarawa": "Lafia",
+    "Niger": "Minna",
+    "Ogun": "Abeokuta",
+    "Ondo": "Akure",
+    "Osun": "Osogbo",
+    "Oyo": "Ibadan",
+    "Plateau": "Jos",
+    "Rivers": "Port Harcourt",
+    "Sokoto": "Sokoto",
+    "Taraba": "Jalingo",
+    "Yobe": "Damaturu",
+    "Zamfara": "Gusau",
+    "FCT": "Abuja"
+  };
+
+  searchBtn.addEventListener("click", () => {
+    const state = stateSelect.value;
+    if (state === "-- Select a State --" || !state) {
+      alert("Please select a Nigerian state!");
+      return;
+    }
+
+    const city = stateToCity[state] || state; // fallback
+    getWeather(city, state);
+  });
+
+  async function getWeather(city, stateName) {
+    spinner.style.display = "block";
+    resultDiv.style.display = "none";
+
+    try {
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city},NG&appid=${apiKey}&units=metric`;
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.cod != 200) {
+        spinner.style.display = "none";
+        alert("Weather not found for " + stateName + ". Try another!");
         return;
       }
-      getWeather(state);
-    });
 
-    async function getWeather(state) {
-      spinner.style.display = "block";
-      resultDiv.style.display = "none";
+      document.getElementById("cityName").textContent = `${stateName}, Nigeria`;
+      document.getElementById("temp").textContent = Math.round(data.main.temp);
+      document.getElementById("desc").textContent = data.weather[0].description;
+      document.getElementById("humidity").textContent = data.main.humidity;
+      document.getElementById("icon").src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
 
-      try {
-        const url = `https://api.openweathermap.org/data/2.5/weather?q=${state},NG&appid=${apiKey}&units=metric`;
-        const response = await fetch(url);
-        const data = await response.json();
-
-        if (data.cod === "404") {
-          spinner.style.display = "none";
-          alert("State not found. Try another one!");
-          return;
-        }
-
-        document.getElementById("cityName").textContent = `${data.name}, Nigeria`;
-        document.getElementById("temp").textContent = Math.round(data.main.temp);
-        document.getElementById("desc").textContent = data.weather[0].description;
-        document.getElementById("humidity").textContent = data.main.humidity;
-        document.getElementById("icon").src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
-
-        spinner.style.display = "none";
-        resultDiv.style.display = "block";
-        resultDiv.classList.add("fade-in");
-      } catch (error) {
-        spinner.style.display = "none";
-        console.error(error);
-        alert("Unable to fetch weather data. Please check your internet or API key.");
-      }
+      spinner.style.display = "none";
+      resultDiv.style.display = "block";
+      resultDiv.classList.add("fade-in");
+    } catch (error) {
+      spinner.style.display = "none";
+      console.error(error);
+      alert("Unable to fetch weather data. Please check your internet or API key.");
     }
-  </script>
+  }
+</script>
+
 </body>
 </html>
