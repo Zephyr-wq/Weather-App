@@ -1,0 +1,169 @@
+:root {
+  --bg1-dark: #0f2027;
+  --bg2-dark: #203a43;
+  --bg3-dark: #2c5364;
+  --card-bg: rgba(0,0,0,0.35);
+  --accent: #4dabf7;
+  --text: #e6e6e6;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: radial-gradient(circle at top, var(--bg1-dark), var(--bg2-dark), var(--bg3-dark));
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  color: var(--text);
+}
+
+.card {
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  padding: 30px 26px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.45);
+  width: 100%;
+  max-width: 720px;
+  animation: fadeIn 0.6s ease;
+  color: #f1f1f1;
+}
+
+.card h2 {
+  font-weight: 600;
+  margin-bottom: 0;
+  color: var(--accent);
+  text-shadow: 0 0 5px rgba(77,171,247,0.4);
+}
+
+select {
+  border-radius: 12px !important;
+  background-color: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+select:focus {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: #4dabf7;
+  box-shadow: none;
+  outline: none;
+}
+
+.btn-primary {
+  border-radius: 12px !important;
+  background: linear-gradient(135deg, #0072ff, #00c6ff);
+  border: none;
+  transition: all 0.25s ease;
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 18px rgba(0, 114, 255, 0.35);
+}
+
+.weather-icon img {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+}
+
+.temp {
+  font-size: 2.6rem;
+  font-weight: 600;
+  margin: 8px 0;
+  color: var(--accent);
+  text-shadow: 0 0 5px rgba(77,171,247,0.45);
+}
+
+.desc {
+  font-size: 1.05rem;
+  text-transform: capitalize;
+  font-weight: 500;
+  color: #ddd;
+}
+
+/* Spinner */
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+  color: var(--accent);
+  display: none;
+}
+
+/* Forecast row */
+.forecast-row {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 10px 6px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.forecast-card {
+  min-width: 120px;
+  border-radius: 14px;
+  padding: 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  backdrop-filter: blur(8px);
+  text-align: center;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+  color: #fff;
+}
+
+.forecast-card .day {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.forecast-card img {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  margin-bottom: 6px;
+}
+
+.forecast-card .temps {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* fade-in */
+.fade-in {
+  animation: fadeIn 0.9s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Dark / Light Theme variants */
+.light-theme body,
+.light-theme {
+  --bg1-dark: #e6f0ff;
+  --bg2-dark: #f3f9ff;
+  --bg3-dark: #ffffff;
+  --card-bg: rgba(255,255,255,0.65);
+  --accent: #0b64d6;
+  --text: #0b1a2b;
+}
+
+.light-theme .card {
+  color: #0b1a2b;
+}
+
+.light-theme .btn-outline-light {
+  color: #0b1a2b;
+  border-color: rgba(0,0,0,0.08);
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .card { padding: 22px; max-width: 380px; }
+  .forecast-card { min-width: 110px; }
+}

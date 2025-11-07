@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Nigeria Weather App</title>
 
   <!-- Bootstrap -->
@@ -11,114 +11,31 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: radial-gradient(circle at top, #0f2027, #203a43, #2c5364);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      color: #e6e6e6;
-    }
-
-    .card {
-      background: rgba(0, 0, 0, 0.35);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 20px;
-      padding: 35px 25px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-      width: 100%;
-      max-width: 430px;
-      animation: fadeIn 0.6s ease;
-      color: #f1f1f1;
-    }
-
-    .card h2 {
-      font-weight: 600;
-      margin-bottom: 20px;
-      color: #4dabf7;
-      text-shadow: 0 0 5px rgba(77,171,247,0.4);
-    }
-
-    select {
-      border-radius: 12px !important;
-      background-color: rgba(255, 255, 255, 0.1);
-      color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    select:focus {
-      background-color: rgba(255, 255, 255, 0.15);
-      color: #fff;
-      border-color: #4dabf7;
-      box-shadow: none;
-    }
-
-    .btn-primary {
-      border-radius: 12px !important;
-      background: linear-gradient(135deg, #0072ff, #00c6ff);
-      border: none;
-      transition: all 0.3s ease;
-      font-weight: 600;
-    }
-
-    .btn-primary:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 15px rgba(0, 114, 255, 0.5);
-    }
-
-    .weather-icon img {
-      width: 100px;
-    }
-
-    .temp {
-      font-size: 3rem;
-      font-weight: 600;
-      margin: 10px 0;
-      color: #4dabf7;
-      text-shadow: 0 0 5px rgba(77,171,247,0.5);
-    }
-
-    .desc {
-      font-size: 1.2rem;
-      text-transform: capitalize;
-      font-weight: 500;
-      color: #ddd;
-    }
-
-    .fade-in {
-      animation: fadeIn 1s ease forwards;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Spinner */
-    .spinner-border {
-      width: 3rem;
-      height: 3rem;
-      color: #4dabf7;
-      display: none;
-    }
-
-    footer {
-      font-size: 0.8rem;
-      margin-top: 20px;
-      color: rgba(255,255,255,0.6);
-    }
-  </style>
+  <!-- App styles -->
+  <link rel="stylesheet" href="weather.css">
 </head>
 <body>
-  <div class="card text-center">
-    <h2>🌤 Nigeria Weather App/Site</h2>
+  <div class="card text-center" id="appCard">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 class="mb-0">🌤 Nigeria Weather App/Site  </h2>
+
+      <div class="d-flex align-items-center gap-2">
+        <!-- Unit Toggle -->
+        <div class="unit-toggle d-flex align-items-center">
+          <label class="me-2 mb-0 small">°C</label>
+          <div class="form-check form-switch mb-0">
+            <input class="form-check-input" type="checkbox" id="unitSwitch" />
+          </div>
+          <label class="ms-2 mb-0 small">°F</label>
+        </div>
+
+        <!-- Theme Toggle -->
+        <button id="themeToggle" class="btn btn-sm btn-outline-light" title="Toggle dark/light">🌙</button>
+      </div>
+    </div>
 
     <div class="input-group mb-3">
-      <select id="stateSelect" class="form-select" style="color: black;">
+      <select id="stateSelect" class="form-select">
         <option selected disabled>-- Select a State --</option>
         <option>Abia</option>
         <option>Adamawa</option>
@@ -161,109 +78,30 @@
       <button class="btn btn-primary" id="searchBtn">Get Weather</button>
     </div>
 
-    <div class="spinner-border mx-auto" id="loadingSpinner" role="status"></div>
+    <div class="spinner-border mx-auto" id="loadingSpinner" role="status" aria-hidden="true"></div>
 
     <div id="weatherResult" class="mt-4" style="display:none;">
       <h3 id="cityName" class="fw-semibold"></h3>
       <div class="weather-icon my-3">
         <img id="icon" src="" alt="Weather Icon" />
       </div>
-      <p class="temp"><span id="temp"></span>°C</p>
+
+      <p class="temp"><span id="temp"></span> <span id="unitLabel">°C</span></p>
       <p class="desc" id="desc"></p>
-      <p>💧 Humidity: <span id="humidity"></span>%</p>
+      <p class="small">💧 Humidity: <span id="humidity"></span>%</p>
+
+      <hr />
+
+      <h5 class="mt-3 mb-2">5-Day Forecast</h5>
+      <div id="forecastContainer" class="forecast-row"></div>
     </div>
+
+    <footer class="text-center small mt-3">
+      <span id="permissionHint">Allow location for automatic weather — or choose a state.</span>
+    </footer>
   </div>
 
-  <script>
-  const apiKey = "9efecffb46e7e68680740d2cf0950b7a";
-  const searchBtn = document.getElementById("searchBtn");
-  const stateSelect = document.getElementById("stateSelect");
-  const spinner = document.getElementById("loadingSpinner");
-  const resultDiv = document.getElementById("weatherResult");
-
-  // Mapping Nigerian states to a major city recognized by OpenWeatherMap
-  const stateToCity = {
-    "Abia": "Umuahia",
-    "Adamawa": "Yola",
-    "Akwa Ibom": "Uyo",
-    "Anambra": "Awka",
-    "Bauchi": "Bauchi",
-    "Bayelsa": "Yenagoa",
-    "Benue": "Makurdi",
-    "Borno": "Maiduguri",
-    "Cross River": "Calabar",
-    "Delta": "Asaba",
-    "Ebonyi": "Abakaliki",
-    "Edo": "Benin City",
-    "Ekiti": "Ado Ekiti",
-    "Enugu": "Enugu",
-    "Gombe": "Gombe",
-    "Imo": "Owerri",
-    "Jigawa": "Dutse",
-    "Kaduna": "Kaduna",
-    "Kano": "Kano",
-    "Katsina": "Katsina",
-    "Kebbi": "Birnin Kebbi",
-    "Kogi": "Lokoja",
-    "Kwara": "Ilorin",
-    "Lagos": "Ikeja",
-    "Nasarawa": "Lafia",
-    "Niger": "Minna",
-    "Ogun": "Abeokuta",
-    "Ondo": "Akure",
-    "Osun": "Osogbo",
-    "Oyo": "Ibadan",
-    "Plateau": "Jos",
-    "Rivers": "Port Harcourt",
-    "Sokoto": "Sokoto",
-    "Taraba": "Jalingo",
-    "Yobe": "Damaturu",
-    "Zamfara": "Gusau",
-    "FCT": "Abuja"
-  };
-
-  searchBtn.addEventListener("click", () => {
-    const state = stateSelect.value;
-    if (state === "-- Select a State --" || !state) {
-      alert("Please select a Nigerian state!");
-      return;
-    }
-
-    const city = stateToCity[state] || state; // fallback
-    getWeather(city, state);
-  });
-
-  async function getWeather(city, stateName) {
-    spinner.style.display = "block";
-    resultDiv.style.display = "none";
-
-    try {
-      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city},NG&appid=${apiKey}&units=metric`;
-      const response = await fetch(url);
-      const data = await response.json();
-
-      if (data.cod != 200) {
-        spinner.style.display = "none";
-        alert("Weather not found for " + stateName + ". Try another!");
-        return;
-      }
-
-      document.getElementById("cityName").textContent = `${stateName}, Nigeria`;
-      document.getElementById("temp").textContent = Math.round(data.main.temp);
-      document.getElementById("desc").textContent = data.weather[0].description;
-      document.getElementById("humidity").textContent = data.main.humidity;
-      document.getElementById("icon").src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
-
-      spinner.style.display = "none";
-      resultDiv.style.display = "block";
-      resultDiv.classList.add("fade-in");
-    } catch (error) {
-      spinner.style.display = "none";
-      console.error(error);
-      alert("Unable to fetch weather data. Please check your internet or API key.");
-    }
-  }
-</script>
-
+  <!-- App script -->
+  <script src="weather.js" defer></script>
 </body>
 </html>
